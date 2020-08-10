@@ -1,0 +1,413 @@
+conectar ftp
+ncftp ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/
+
+do PC para a AWS
+scp -i /home/fabio/Downloads/aws-chave.pem /home/fabio/Downloads/resumo.txt ubuntu@ec2-3-15-227-169.us-east-2.compute.amazonaws.com:~
+
+da AWS para o PC
+scp -i /home/fabio/Downloads/aws-chave.pem ubuntu@ec2-3-15-227-169.us-east-2.compute.amazonaws.com:~/resumo.txt ~/Downloads/resumo.txt
+
+baixar
+mget RDAC10*.dbc
+
+
+tabela 3213 alfabetismo
+
+-------------------
+df -hT /dev/xvda1
+monitorar volume
+
+espaco na pasta du -sh
+
+local dos arquivos
+/home/ubuntu/
+
+arquivos no mysql
+/var/lib/mysql-files
+
+
+Exportar para CSV
+SELECT * FROM vw_datasus_resumo INTO OUTFILE '/var/lib/mysql-files/resumo.txt';
+mv /var/lib/mysql-files/resumo.txt resumo.txt
+
+arquivos no dashboard
+/opt/lampp/htdocs/dashboard/
+
+montar o disco
+sudo mount /dev/xvdf /data
+sudo mount /dev/xvdg /dados
+
+transforma os arquivos datasus
+
+docker run -it -v /home/ubuntu/arquivos/:/usr/src/app/data dbc2csv make
+
+iniciar o xampp
+/opt/lampp/xampp start
+
+SELECT @@innodb_buffer_pool_size;
+
+/opt/lampp/htdocs/dashboard/
+
+
+mysql
+
+GRANT ALL PRIVILEGES ON * . * TO 'root'@'localhost';
+
+mysql -u root -p
+fog1717
+
+create database ufg;
+
+use ufg // usar o banco de dados
+
+select UF_ZI, count(UF_ZI) as QTD from datasus_rd_sih group by UF_ZI;
+
+mysqladmin -u root -p --verbose processlist --sleep 5
+
+
+for f in /home/ubuntu/arquivos/csv/*.csv
+do
+       mysql -uroot -pfog1717 ufg -e "LOAD DATA LOCAL INFILE '"$f"' INTO TABLE datasus_rd_sih_go 
+      FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES" 
+echo "Done: '"$f"' at $(date)"
+done
+
+for f in /home/ubuntu/arquivos/csv/*.csv
+do
+	mysql -uroot -pfog1717 ufg -e "LOAD DATA LOCAL INFILE '"$f"'
+	INTO TABLE datasus_rd_sih_go 
+     	FIELDS TERMINATED BY ','
+	ENCLOSED BY '\"'
+	LINES TERMINATED BY '\n'
+	IGNORE 1 LINES" 
+	echo "Done: '"$f"' at $(date)"
+done
+
+
+LOAD DATA LOCAL INFILE '/dados/datasus/csv/RDAC0801.csv'
+INTO TABLE datasus_rd_sih
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+
+
+Informações importantes
+CEP
+MUNIC_RES
+NASC
+SEXO
+DIAG_PRINC
+NUM_FILHOS
+INSTRU
+CID_NOTIF
+CBOR
+CNAER
+VINCPREV
+RACA_COR
+
+show columns from datasus_rd_sih;
+--------------------
+-------------------
+CREATE TABLE datasus(
+UF_ZI char(6),
+ANO_CMPT char(4),
+MÊS_CMPT char(2),
+ESPEC char(2),
+CGC_HOSP char(14),
+N_AIH char(13),
+IDENT char(1),
+CEP char(8),
+MUNIC_RES char(6),
+NASC char(8),
+SEXO char(1),
+UTI_MES_IN int(2),
+UTI_MES_AN int(2),
+UTI_MES_AL int(2),
+UTI_MES_TO int(3),
+MARCA_UTI char(2),
+UTI_INT_IN int(2),
+UTI_INT_AN int(2),
+UTI_INT_AL int(2),
+UTI_INT_TO int(3),
+DIAR_ACOM int(3),
+QT_DIARIAS int(3),
+PROC_SOLIC char(10),
+PROC_REA char(10),
+VAL_SH decimal(13,2),
+VAL_SP decimal(13,2),
+VAL_SADT decimal(13,2),
+VAL_RN decimal(13,2),
+VAL_ACOMP decimal(13,2),
+VAL_ORTP decimal(13,2),
+VAL_SANGUE decimal(13,2),
+VAL_SADTSR decimal(11,2),
+VAL_TRANSP decimal(13,2),
+VAL_OBSANG decimal(11,2),
+VAL_PED1AC decimal(11,2),
+VAL_TOT decimal(14,2),
+VAL_UTI decimal(8,2),
+US_TOT decimal(10,2),
+DI_INTER char(8),
+DT_SAIDA char(8),
+DIAG_PRINC char(4),
+DIAG_SECUN char(4),
+COBRANCA char(2),
+NATUREZA char(2),
+NAT_JUR char(4),
+DESTAO char(1),
+RUBRICA int(5),
+IND_VDRL char(1),
+MUNIC_MOV char(6),
+COD_IDADE char(1),
+IDADE int(2),
+DIAS_PERM int(5),
+MORTE int(1),
+NACIONAL char(2),
+NUM_PROC char(4),
+CAR_INT char(2),
+TOT_PT_SP int(6),
+CPF_AUT char(11),
+HOMONIMO char(1),
+NUM_FILHOS int(2),
+INSTRU char(1),
+CID_NOTIF char(4),
+CONTRACEP1 char(2),
+CONTRACEP2 char(2),
+GESTRISCO char(1),
+INSC_PN char(12),
+SEQ_AIH5 char(3),
+CBOR char(3),
+CNAER char(3),
+VINCPREV char(1),
+GESTOR_COD char(3),
+GESTOR_TP char(1),
+GESTOR_CPF char(11),
+GESTOR_DT char(8),
+CNES char(7),
+CNPJ_MANT char(14),
+INFEHOSP char(1),
+CID_ASSO char(4),
+CID_MORTE char(4),
+COMPLEX char(2),
+FINANC char(2),
+FAEC_TP char(6),
+REGCT char(4),
+RACA_COR char(4),
+ETNIA char(4),
+SEQUENCIA int(9),
+REMESSA char(21),
+AUD_JUST char(50),
+SIS_JUST char(50),
+VAL_SH_FED decimal(10,2), 
+VAL_SP_FED decimal(10,2), 
+VAL_SH_GES decimal(10,2),
+VAL_SP_GES decimal(10,2),
+VAL_UCI decimal(10,2),
+MARCA_UCI char(2),
+DIAGSEC1 char(4), 
+DIAGSEC2 char(4), 
+DIAGSEC3 char(4), 
+DIAGSEC4 char(4), 
+DIAGSEC5 char(4),
+DIAGSEC6 char(4),
+DIAGSEC7 char(4),
+DIAGSEC8 char(4),
+DIAGSEC9 char(4),
+TPDISEC1 char(1),
+TPDISEC2 char(1),
+TPDISEC3 char(1),
+TPDISEC4 char(1),
+TPDISEC5 char(1),
+TPDISEC6 char(1),
+TPDISEC7 char(1),
+TPDISEC8 char(1),
+TPDISEC9 char(1)
+);
+
+
+
+CREATE TABLE vw_datasus_rd_sih
+SELECT
+UF_ZI,
+ANO_CMPT,
+MÊS_CMPT,
+CEP,
+MUNIC_RES,
+SEXO,
+DIAG_PRINC,
+NUM_FILHOS,
+IDADE,
+RACA_COR,
+COUNT(UF_ZI) AS QTD
+FROM datasus_rd_sih_go
+WHERE DIAG_PRINC IN ( 'B56' , 'A90' , 'A91' , 'B72' , 'B67' , 'B55' , 'A30' , 'B49' , 'B36' , 'B73' , 'A82' , 'B65' , 'A71' , 'A27' , 'B83' , 'B76' )
+GROUP BY
+UF_ZI,
+ANO_CMPT,
+MÊS_CMPT,
+CEP,
+MUNIC_RES,
+SEXO,
+DIAG_PRINC,
+NUM_FILHOS,
+IDADE,
+RACA_COR
+;
+
+for f in /dados/datasus/csv/RDGO*.csv
+do
+    mysql -uroot -pfog1717 ufg -e "LOAD DATA LOCAL INFILE '"$f"' INTO TABLE datasus_rd_sih_go 
+      FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES" 
+echo "Done: '"$f"' at $(date)"
+done
+
+Conforme Lista Morb. CID-10 – DATASUS 
+1. Tripanossomíase (doença de Chagas) - B57 B570 B571 B572 B573 B574 B575
+2. Dengue - A90 E A91
+3. Dracunculíase - B72
+4. Equinococose - B67
+5. Leishmaniose - B55 B550 B551 B552 B559
+6. Hanseníase (doença de Hansen) - A30 A300 A301 A302 A303 A304 A305 A306 A307 A308 A309
+7. Micoses profundas - A42 A420 A421 A422 A428 A429 B205 B36 B368 B369 B38 B380 B381 B382 B383 B384 B387 B388 B389 B40 B400 B401 B402 B403 B407 B408 B409 B41 B410 B417 B418 B419 B43 B430 B438 B439 B46 B460 B461 B462 B463 B464 B465 B468 B469 B48 B480 B487 B488 B49 C840 G021 H622 J172 M016
+8. Oncocercose (cegueira dos rios) - B73
+9. Raiva - A82 A820 A821 A829
+10. Esquistossomose - B65 B650 B651 B652 B658 B690
+11. Tracoma - A71 A710 A711 A719
+12. Leptospirose - A27 A278 A279
+13. Helmintíases - B83 B838 B81 B814 B818
+14. Ancilostomíase - B76 B768 B769
+
+CREATE TABLE vw_resumo_go
+SELECT
+MUNIC_RES,
+ANO_CMPT,
+COUNT(UF_ZI) AS QTD
+FROM datasus_rd_sih_go
+WHERE DIAG_PRINC IN ( 'B56' , 'A90' , 'A91' , 'B72' , 'B67' , 'B55' , 'A30' , 'B49' , 'B36' , 'B73' , 'A82' , 'B65' , 'A71' , 'A27' , 'B83' , 'B76' ) AND ANO_CMPT = 2010
+GROUP BY
+MUNIC_RES,
+ANO_CMPT
+;
+
+
+
+###################
+#!/bin/bash
+
+function executar() {
+for i in "$@"
+do
+echo "Entrou no FTP"
+cd /home/ubuntu/arquivos/
+ncftpget ftp://ftp.datasus.gov.br/dissemin/publicos/SIHSUS/200801_/Dados/RD${i}${28}*.dbc
+
+
+echo "Transforma os arquivo .dbc em csv" 
+docker run -it -v /home/ubuntu/arquivos/:/usr/src/app/data dbc2csv make
+
+echo "Exclui *dbf"
+cd /home/ubuntu/arquivos/
+rm RD${i}${28}*.dbf
+
+cd /home/ubuntu/arquivos/csv/
+chmod 777 *
+
+echo "Carrega no Banco de Dados"
+for f in /home/ubuntu/arquivos/csv/RD${i}${28}*.csv
+do
+	mysql -uroot -pfog1717 ufg -e "LOAD DATA LOCAL INFILE '"$f"'
+	INTO TABLE datasus
+     	FIELDS TERMINATED BY ','
+	ENCLOSED BY '\"'
+	LINES TERMINATED BY '\n'
+	IGNORE 1 LINES" 
+	echo "Done: '"$f"' at $(date)"
+done
+
+echo "Apaga dos arquivos *.dbc"
+cd /home/ubuntu/arquivos/
+rm *
+
+echo "Apaga dos arquivos *.csv"
+cd /home/ubuntu/arquivos/csv/
+rm *
+
+mysql -uroot -pfog1717 ufg -e "create table vw_datasus_${i}
+SELECT
+MUNIC_RES,
+DIAG_PRINC,
+COUNT(MUNIC_RES) AS QTD
+FROM datasus
+WHERE DIAG_PRINC IN ( 'B57' , 'B570' , 'B571' , 'B572' , 'B573' , 'B574' , 'B575' , 'A90' , 'A91' , 'B72' , 'B67' , 'B55' , 'B550' , 'B551' , 'B552' , 'B559' , 'A30' , 'A300' , 'A301' , 'A302' , 'A303' , 'A304' , 'A305' , 'A306' , 'A307' , 'A308' , 'A309' , 'A42' , 'A420' , 'A421' , 'A422' , 'A428' , 'A429' , 'B205' , 'B36' , 'B368' , 'B369' , 'B38' , 'B380' , 'B381' , 'B382' , 'B383' , 'B384' , 'B387' , 'B388' , 'B389' , 'B40' , 'B400' , 'B401' , 'B402' , 'B403' , 'B407' , 'B408' , 'B409' , 'B41' , 'B410' , 'B417' , 'B418' , 'B419' , 'B43' , 'B430' , 'B438' , 'B439' , 'B46' , 'B460' , 'B461' , 'B462' , 'B463' , 'B464' , 'B465' , 'B468' , 'B469' , 'B48' , 'B480' , 'B487' , 'B488' , 'B49' , 'C840' , 'G021' , 'H622' , 'J172' , 'M016' , 'B73' , 'A82' , 'A820' , 'A821' , 'A829' , 'B65' , 'B650' , 'B651' , 'B652' , 'B658' , 'B690' , 'A71' , 'A710' , 'A711' , 'A719' , 'A27' , 'A278' , 'A279' , 'B83' , 'B838' , 'B81' , 'B814' , 'B818' , 'B76' , 'B768' , 'B769' )
+GROUP BY
+MUNIC_RES,
+DIAG_PRINC"
+
+mysql -uroot -pfog1717 ufg -e "truncate datasus"
+
+done
+
+}
+
+executar AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO 10
+
+create table vw_datasus_resumo
+select * from vw_datasus_AC union
+select * from vw_datasus_AL union
+select * from vw_datasus_AP union
+select * from vw_datasus_AM union
+select * from vw_datasus_BA union
+select * from vw_datasus_CE union
+select * from vw_datasus_DF union
+select * from vw_datasus_ES union
+select * from vw_datasus_GO union
+select * from vw_datasus_MA union
+select * from vw_datasus_MT union
+select * from vw_datasus_MS union
+select * from vw_datasus_MG union
+select * from vw_datasus_PA union
+select * from vw_datasus_PB union
+select * from vw_datasus_PR union
+select * from vw_datasus_PE union
+select * from vw_datasus_PI union
+select * from vw_datasus_RJ union
+select * from vw_datasus_RN union
+select * from vw_datasus_RS union
+select * from vw_datasus_RO union
+select * from vw_datasus_RR union
+select * from vw_datasus_SC union
+select * from vw_datasus_SP union
+select * from vw_datasus_SE union
+select * from vw_datasus_TO;
+
+drop table vw_datasus_AC;
+drop table vw_datasus_AL;
+drop table vw_datasus_AP;
+drop table vw_datasus_AM;
+drop table vw_datasus_BA;
+drop table vw_datasus_CE;
+drop table vw_datasus_DF;
+drop table vw_datasus_ES;
+drop table vw_datasus_GO;
+drop table vw_datasus_MA;
+drop table vw_datasus_MT;
+drop table vw_datasus_MS;
+drop table vw_datasus_MG;
+drop table vw_datasus_PA;
+drop table vw_datasus_PB;
+drop table vw_datasus_PR;
+drop table vw_datasus_PE;
+drop table vw_datasus_PI;
+drop table vw_datasus_RJ;
+drop table vw_datasus_RN;
+drop table vw_datasus_RS;
+drop table vw_datasus_RO;
+drop table vw_datasus_RR;
+drop table vw_datasus_SC;
+drop table vw_datasus_SP;
+drop table vw_datasus_SE;
+drop table vw_datasus_TO;
+
+
+
